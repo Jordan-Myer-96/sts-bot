@@ -24,11 +24,6 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
 
-
-
-
-
-
 def generate_openai_response(question):
     response = openai.Completion.create(
         engine="text-davinci-002",
