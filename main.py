@@ -7,10 +7,10 @@ import giphy_client
 import requests
 from dotenv import load_dotenv
 from discord.ext import commands
-from giphy_client.api_client import ApiClient
 from giphy_client.rest import ApiException
 from bs4 import BeautifulSoup
 import re
+from sympy import limit
 
 
 load_dotenv()
@@ -36,38 +36,9 @@ def generate_openai_response(question):
 GIPHY_API_KEY = os.getenv("GIPHY_API_KEY")
 
 
-
-
-def get_random_excited_gif():
-    try:
-        # Create a Giphy API URL for random "excited" GIFs
-        giphy_url = f"https://api.giphy.com/v1/gifs/random?api_key={GIPHY_API_KEY}&tag=happy"
-
-
-        # Send a GET request to Giphy API
-        response = requests.get(giphy_url)
-
-
-        # Check if the request was successful
-        if response.status_code == 200:
-            data = response.json()
-            if "data" in data and "image_url" in data["data"]:
-                return data["data"]["image_url"]
-            else:
-                return None
-        else:
-            return None
-    except Exception as e:
-        print("An error occurred:", str(e))
-        return None
-
-
 # Check if either token is missing
 if not DISCORD_TOKEN or not OPENAI_API_KEY:
     raise ValueError("Discord bot token or OpenAI API key not found in .env file")
-
-
-
 
 # Define your desired intents. For example, to receive message events, use:
 intents = discord.Intents.default()
@@ -76,8 +47,6 @@ intents.message_content = True
 
 # Create an instance of the Bot class with intents
 bot = commands.Bot(command_prefix='!', intents=intents)
-
-
 
 
 @bot.event
@@ -152,16 +121,24 @@ async def your_discord_command(ctx):
 
 
 @bot.command()
-async def quiztime(ctx):
+async def quiztime(ctx, *,q="super excited"):
+
+    api_key = GIPHY_API_KEY
+    api_instance = giphy_client.DefaultApi()
+    
     try:
-        excited_gif_url = get_random_excited_gif()
-        if excited_gif_url:
-            await ctx.send(f"Here's an 'excited' GIF for you:\n{excited_gif_url}")
-        else:
-            await ctx.send("I couldn't find any 'excited' GIFs at the moment. Try again later.")
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
 
+        api_response = api_instance.gifs_search_get(api_key,q,limit = 10, rating = "g")
+        lst = list(api_response.data)
+        giff = random.choice(lst)
 
+        embed = discord.Embed(title="QUIZTIME")
+        embed.set_image(url = f"https://media.giphy.com/media/{giff.id}/giphy.gif")
+
+        await ctx.channel.send(embed=embed)
+
+    except ApiException as r:
+        print("Exception for the api")
+        
 bot.run(DISCORD_TOKEN)
 
