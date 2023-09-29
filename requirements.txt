@@ -4,5 +4,5 @@ discord.py==2.3.2
 giphy_client==1.0.0
 openai==0.28.1
 python-dotenv==1.0.0
-Requests==2.31.0pip
+Requests==2.31.0
 discord==232405
