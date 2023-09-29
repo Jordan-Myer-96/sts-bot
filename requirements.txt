@@ -1,0 +1,8 @@
+aiohttp==3.8.4
+beautifulsoup4==4.12.2
+discord.py==2.3.2
+giphy_client==1.0.0
+openai==0.28.1
+python-dotenv==1.0.0
+Requests==2.31.0pip
+discord==232405
