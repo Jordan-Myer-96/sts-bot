@@ -16,6 +16,9 @@ from sympy import limit
 
 load_dotenv()
 
+hype_phrases = ["LET'S GO","WOOOOOO!!!!","I'M SO HYPED","I CAN'T WAIT",
+                "IT'S HAPPENING—EVERYONE STAY CALM","YESSSSSS","FINALLY, I'VE BEEN WAITING ALL DAY",
+                "WHEN IT'S FINALLY QUIZ TIME","THIS IS GOING TO BE SO LIT","I'M PUMPED","YOU ALREADY KNOW WHAT TIME IT IS"]
 
 # Retrieve the Discord bot token from the environment
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
@@ -102,7 +105,6 @@ async def sts(ctx, *, query):
                 await ctx.send(f"The wiki search was https://slay-the-spire.fandom.com/wiki/{command}")
                 await ctx.send(f"I'm afraid I didn't find what you were looking for. Failed with error code {response.status}")
 
-
 @bot.command()
 async def ask(ctx, *, question):
     try:
@@ -111,9 +113,6 @@ async def ask(ctx, *, question):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-
-
-
 # You'll need to set up your Discord.py bot and command handling separately
 # Assuming `bot` is your Discord.py bot instance, you can add your command like this:
 @bot.command()
@@ -121,8 +120,7 @@ async def your_discord_command(ctx):
     await sts(ctx)
 
 
-@bot.command()
-async def quiztime(ctx, *,q="super excited"):
+async def quiztime(ctx,title, *,q="super excited"):
 
     api_key = GIPHY_API_KEY
     api_instance = giphy_client.DefaultApi()
@@ -133,13 +131,28 @@ async def quiztime(ctx, *,q="super excited"):
         lst = list(api_response.data)
         giff = random.choice(lst)
 
-        embed = discord.Embed(title="QUIZTIME")
+        embed = discord.Embed(title=title)
         embed.set_image(url = f"https://media.giphy.com/media/{giff.id}/giphy.gif")
 
         await ctx.channel.send(embed=embed)
 
     except ApiException as r:
         print("Exception for the api")
-        
+
+@bot.event
+async def on_message(message):
+    # Check if the message is not sent by the bot itself
+    if not message.author.bot:
+        if "quiz time" in message.content.lower() or "quiztime" in message.content.lower():
+            if message.content.startswith('!'):
+                title = random.choice(hype_phrases)
+            else: 
+                title = "DID SOMEONE SAY QUIZ TIME?!?!?!"
+            ctx = await bot.get_context(message)
+            await quiztime(ctx, title = title)
+            # Respond to the message
+            #await ctx.invoke(bot.get_command('quiztime'), title=title,q = "super excited")
+
+
 bot.run(DISCORD_TOKEN)
 
