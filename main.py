@@ -115,10 +115,6 @@ async def ask(ctx, *, question):
 
 # You'll need to set up your Discord.py bot and command handling separately
 # Assuming `bot` is your Discord.py bot instance, you can add your command like this:
-@bot.command()
-async def your_discord_command(ctx):
-    await sts(ctx)
-
 
 async def quiztime(ctx,title, *,q="super excited"):
 
@@ -152,6 +148,8 @@ async def on_message(message):
             await quiztime(ctx, title = title)
             # Respond to the message
             #await ctx.invoke(bot.get_command('quiztime'), title=title,q = "super excited")
+    
+    await bot.process_commands(message)
 
 
 bot.run(DISCORD_TOKEN)
