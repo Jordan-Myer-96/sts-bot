@@ -68,6 +68,8 @@ async def hello(ctx):
 async def sts(ctx, *, query):
     # Convert the query to title case and replace spaces with underscores
     command = re.sub(r'\s+', '_', titlecase(query))
+    if "quiztime" in query or "quiz time" in query: 
+        return
     
     # Create an HTTP session using aiohttp
     async with aiohttp.ClientSession() as session:
@@ -102,8 +104,8 @@ async def sts(ctx, *, query):
                 # Send the embed in the Discord channel
                 await ctx.send(embed=embed)
             else:
-                await ctx.send(f"The wiki search was https://slay-the-spire.fandom.com/wiki/{command}")
-                await ctx.send(f"I'm afraid I didn't find what you were looking for. Failed with error code {response.status}")
+
+                await ctx.send(f"I'm afraid I didn't find what you were looking for")
 
 @bot.command()
 async def ask(ctx, *, question):
