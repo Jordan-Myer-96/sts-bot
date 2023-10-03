@@ -5,6 +5,7 @@ import os
 import random
 import giphy_client
 import requests
+from titlecase import titlecase
 from dotenv import load_dotenv
 from discord.ext import commands
 from giphy_client.rest import ApiException
@@ -63,7 +64,7 @@ async def hello(ctx):
 @bot.command()
 async def sts(ctx, *, query):
     # Convert the query to title case and replace spaces with underscores
-    command = re.sub(r'\s+', '_', query.title())
+    command = re.sub(r'\s+', '_', titlecase(query))
     
     # Create an HTTP session using aiohttp
     async with aiohttp.ClientSession() as session:
@@ -99,7 +100,7 @@ async def sts(ctx, *, query):
                 await ctx.send(embed=embed)
             else:
                 await ctx.send(f"The wiki search was https://slay-the-spire.fandom.com/wiki/{command}")
-                await ctx.send("I'm afraid I didn't find what you were looking for. Failed with error code {response.status}")
+                await ctx.send(f"I'm afraid I didn't find what you were looking for. Failed with error code {response.status}")
 
 
 @bot.command()
